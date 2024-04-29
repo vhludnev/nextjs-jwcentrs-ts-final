@@ -1,18 +1,25 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import type { Session } from 'next-auth'
-import Link from 'next/link'
+//import Link from 'next/link'
 import Image from 'next/image'
 import { FcKey, VscSignOut, BiMenu, TbTrolley, TbUsers, BsPinMap } from '@/lib/icons'
 import ThemeSwitcher from './ThemeSwitcher'
 import ProfilePopup from './popups/ProfilePopup'
 import { cc, permissionClient } from '@/utils'
+//import { Locale } from '../../i18n.config'
+import CustomLink from './CustomLink'
+import { useTranslations } from 'next-intl'
+
+const LangToggleMain = dynamic(() => import('./LangToggleMain'))
 
 interface Props {
   session: Session | null
+  //lang: Locale
 }
 
 const Nav = ({ session }: Props) => {
@@ -23,6 +30,7 @@ const Nav = ({ session }: Props) => {
 
   const closeNavBar = () => setToggleDropdown(false)
 
+  const t = useTranslations('HomePage')
   const pathname = usePathname()
 
   useLayoutEffect(() => {
@@ -72,9 +80,9 @@ const Nav = ({ session }: Props) => {
     >
       <nav className='px-3.5 md:container md:mx-auto h-full flex items-center justify-between'>
         <div>
-          <Link href='/' onClick={closeNavBar}>
+          <CustomLink href={'/'} onClick={closeNavBar}>
             <Image src='/icons/logo50.png' alt='logo' width={34} height={34} className='object-contain' priority />
-          </Link>
+          </CustomLink>
         </div>
 
         {/* <div className="-mr-2 md:mr-0"> */}
@@ -131,11 +139,17 @@ const Nav = ({ session }: Props) => {
               </div>
               {session?.user && (
                 <>
-                  <p className='item animation-delay-200 text-sm font-inter font-medium text-gray-700 dark:text-gray-300'>
-                    Здравствуй,{' '}
+                  {/* <p className='item animation-delay-200 text-sm font-inter font-medium text-gray-700 dark:text-gray-300'>
+                    {t('hello')},{' '}
                   </p>
                   <div className='item animation-delay-200 -mt-2 text-sm font-inter font-medium text-gray-700 dark:text-gray-300'>
                     {session.user?.name?.split(' ')[0] || 'Возвещатель'}
+                  </div> */}
+                  <div className='item animation-delay-200 text-end text-sm font-inter font-medium text-gray-700 dark:text-gray-300'>
+                    {t.rich('hello', {
+                      p: chunks => <p className='mt-1'>{chunks}</p>,
+                      name: session.user?.name?.split(' ')[0] || t('publisher'),
+                    })}
                   </div>
                   <div className='item animation-delay-200' onClick={closeNavBar}>
                     <ProfilePopup data={session.user} roundedSize='lg' />
@@ -145,63 +159,68 @@ const Nav = ({ session }: Props) => {
               {permissionClient('publisher', session?.user) && (
                 <>
                   <hr className='item w-full animation-delay-300' />
-                  <Link
+                  <CustomLink
                     href='/stand'
                     className={`item animation-delay-400 dropdown_link ${activeStyle('/stand')}`}
                     onClick={closeNavBar}
                   >
-                    Стенды
+                    {t('stands')}
                     <TbTrolley size={22} color='lightgreen' />
-                  </Link>
+                  </CustomLink>
                 </>
               )}
               {permissionClient('admin', session?.user) && (
                 <>
-                  <Link
+                  <CustomLink
                     href='/territories'
                     prefetch={false}
                     className={`item animation-delay-500 dropdown_link ${activeStyle('/territories')}`}
                     onClick={closeNavBar}
                   >
-                    Участки
+                    {t('territories')}
                     <BsPinMap size={20} className='text-yellow-600' />
-                  </Link>
-                  <Link
+                  </CustomLink>
+                  <CustomLink
                     href='/users'
                     prefetch={false}
                     className={`item animation-delay-600 dropdown_link ${activeStyle('/users')}`}
                     onClick={closeNavBar}
                   >
-                    Список
+                    {t('users')}
                     <TbUsers size={20} className='text-red-400' />
-                  </Link>
+                  </CustomLink>
                 </>
               )}
               <hr className={`item w-full ${session?.user ? 'animation-delay-700' : 'animation-delay-300'}`} />
-              {session?.user ? (
-                <button
-                  type='button'
-                  onClick={() => {
-                    closeNavBar()
-                    signOut({
-                      callbackUrl: '/auth',
-                    })
-                  }}
-                  className='item animation-delay-800 mt-3'
-                >
-                  <VscSignOut size={20} className='text-gray-700 hover:text-orange-500 dark:text-gray-300' />
-                </button>
-              ) : (
-                <Link
-                  href='/auth'
-                  prefetch={false}
-                  className='item animation-delay-400 text-sm font-inter font-medium text-gray-700 hover:text-gray-500 dark:text-gray-300 flex gap-1'
-                  onClick={closeNavBar}
-                >
-                  Войти
-                  <FcKey size={20} color='lightsalmon' cursor='pointer' />
-                </Link>
-              )}
+              <div className='flex justify-between items-center w-full mt-3 gap-2'>
+                <div className={cc('item', session?.user ? 'animation-delay-800' : 'item animation-delay-400')}>
+                  <LangToggleMain />
+                </div>
+                {session?.user ? (
+                  <button
+                    type='button'
+                    onClick={() => {
+                      closeNavBar()
+                      signOut({
+                        callbackUrl: '/auth',
+                      })
+                    }}
+                    className='item animation-delay-800'
+                  >
+                    <VscSignOut size={20} className='text-gray-700 hover:text-orange-500 dark:text-gray-300' />
+                  </button>
+                ) : (
+                  <CustomLink
+                    href='/auth'
+                    prefetch={false}
+                    className='item animation-delay-400 text-sm font-inter font-medium text-gray-700 hover:text-gray-500 dark:text-gray-300 flex gap-1'
+                    onClick={closeNavBar}
+                  >
+                    {t('enter')}
+                    <FcKey size={20} color='lightsalmon' cursor='pointer' />
+                  </CustomLink>
+                )}
+              </div>
             </div>
           </div>
         </div>

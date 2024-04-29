@@ -7,6 +7,7 @@ import { usePrevious } from '@/hooks/usePrevious'
 import type { EventPopupProps, TEvent, TEventDate } from '@/types/event'
 import Modal, { ModalPassedProps } from './Modal'
 import { addHours, isSameDay, parse, startOfDay, startOfHour } from 'date-fns'
+import { useTranslations } from 'next-intl'
 //import MapModal from './MapModal'
 //import { FaMapMarkedAlt } from 'react-icons/fa'
 
@@ -28,6 +29,7 @@ const ControlledPopupEditable = ({
   closeOnDocumentClick,
   className,
   roundedSize,
+  dateFnsLocale,
 }: Props & ModalPassedProps) => {
   const { date } = data as TEventDate
 
@@ -45,6 +47,8 @@ const ControlledPopupEditable = ({
   const [state, setState] = useState(initialState)
 
   const stateChanged = usePrevious(state)
+
+  const t = useTranslations('Popups')
 
   // const start = parse(formatFn(
   //   state.date + " " + state.timeFrom,
@@ -148,7 +152,7 @@ const ControlledPopupEditable = ({
           /> */}
 
           <select required value={state.title} name='title' onChange={handleStateChange}>
-            <option value=''>Выберите место</option>
+            <option value=''>{t('choose-place')}</option>
             {AREA.map(a => (
               <option key={a.id} value={a.title}>
                 {a.title}
@@ -194,7 +198,7 @@ const ControlledPopupEditable = ({
             <input
               type='text'
               name='name1'
-              placeholder='Возвещатель 1'
+              placeholder={t('publisher', { number: 1 })}
               value={state.name1}
               required
               minLength={3}
@@ -205,7 +209,7 @@ const ControlledPopupEditable = ({
               name='name2'
               required
               minLength={3}
-              placeholder='Возвещатель 2'
+              placeholder={t('publisher', { number: 2 })}
               value={state.name2}
               onChange={handleStateChange}
             />
@@ -220,7 +224,7 @@ const ControlledPopupEditable = ({
               onClick={saveHandler}
               disabled={!state.name1 || !state.name2 || !state.title || !stateChanged}
             >
-              Сохранить
+              {t('save')}
             </button>
           </div>
 
@@ -229,7 +233,7 @@ const ControlledPopupEditable = ({
               className='button hover:text-[#6992ca] hover:border-[#6992ca] transition ease-in-out duration-250'
               onClick={handleCloseModal}
             >
-              Закрыть
+              {t('close')}
             </button>
           </div>
         </div>

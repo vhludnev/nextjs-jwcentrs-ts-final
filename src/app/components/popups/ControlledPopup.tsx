@@ -7,7 +7,8 @@ import { usePrevious } from '@/hooks/usePrevious'
 import ConfirmPopup from './ConfirmPopup'
 import type { EventPopupProps, TEvent } from '@/types/event'
 import Modal, { ModalPassedProps } from './Modal'
-import { ru } from 'date-fns/locale'
+//import { ru, lv } from 'date-fns/locale'
+import { useTranslations } from 'next-intl'
 //import dynamic from "next/dynamic";
 //const ConfirmPopup = dynamic(() => import("./ConfirmPopup"));
 
@@ -30,6 +31,7 @@ const ControlledPopup = ({
   closeOnDocumentClick,
   className,
   roundedSize,
+  dateFnsLocale,
 }: EventPopupProps & ModalPassedProps) => {
   //if (!data) return;
 
@@ -40,6 +42,8 @@ const ControlledPopup = ({
     name1: name1 || '',
     name2: name2 || '',
   })
+
+  const t = useTranslations('Popups')
 
   const dataToSave: TEvent = {
     ...state,
@@ -95,7 +99,7 @@ const ControlledPopup = ({
         </span> */}
 
         <span>
-          {capitalizeString(format(start, 'eeeeee. dd.MM.yyyy ', { locale: ru }))}
+          {capitalizeString(format(start, 'EE, P ', { locale: dateFnsLocale }))}
           &#128337;
           {`${format(start, ' HH:mm')} - ${format(end, 'HH:mm')}`}
         </span>
@@ -105,7 +109,7 @@ const ControlledPopup = ({
           <input
             type='text'
             name='name1'
-            placeholder='Возвещатель 1'
+            placeholder={t('publisher', { number: 1 })}
             value={state.name1}
             required
             minLength={3}
@@ -116,7 +120,7 @@ const ControlledPopup = ({
             name='name2'
             required
             minLength={3}
-            placeholder='Возвещатель 2'
+            placeholder={t('publisher', { number: 2 })}
             value={state.name2}
             onChange={handleStateChange}
           />
@@ -131,7 +135,7 @@ const ControlledPopup = ({
             onClick={saveHandler}
             disabled={!state.name1 || !state.name2 || !state.title || !stateChanged}
           >
-            {id ? 'Изменить' : 'Сохранить'}
+            {id ? t('change') : t('save')}
           </button>
         </div>
 
@@ -144,7 +148,9 @@ const ControlledPopup = ({
               nested={true}
               lockScroll={lockScroll}
               button={
-                <button className='button danger hover:bg-red-700 transition ease-in-out duration-250'>Удалить</button>
+                <button className='button danger hover:bg-red-700 transition ease-in-out duration-250'>
+                  {t('delete')}
+                </button>
               }
             />
           )}
@@ -152,7 +158,7 @@ const ControlledPopup = ({
             className='button hover:text-[#6992ca] hover:border-[#6992ca] transition ease-in-out duration-250'
             onClick={closeModal}
           >
-            Закрыть
+            {t('close')}
           </button>
         </div>
       </div>

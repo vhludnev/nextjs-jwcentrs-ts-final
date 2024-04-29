@@ -1,10 +1,10 @@
-import { getCurrentUser } from "../lib/session";
-import Nav from "./Nav";
+import { getCurrentUser } from '../lib/session'
+import Nav from './Nav'
 
 const NavWrapper = async () => {
-  const session = await getCurrentUser();
+  const session = await getCurrentUser()
 
-  return <Nav session={session} />;
-};
+  return <Nav session={session} />
+}
 
-export default NavWrapper;
+export default NavWrapper

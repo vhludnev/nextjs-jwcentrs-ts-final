@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "hello": "Sveiks",
+    "enter": "Ienākt",
+    "stands": "Stendi",
+    "schedules": "Grafiki",
+    "report": "Atskaites",
+    "territoryinfo": "Manas Teritorijas",
+    "announcements": "Paziņojumi",
+    "territories": "Teritorijas",
+    "all-reports": "Atskaites",
+    "talks": "Runas",
+    "users": "Saraksts",
+    "help": "Palīdzība"
+  },
+  "page": {
+    "home": {
+      "title": "Welcome to NextJs i18n",
+      "description": "Internationalization in NextJs 13 App router"
+    },
+    "dashboard": {
+      "title": "Dashboard Page",
+      "description": "This is the dashboard page"
+    }
+  },
+  "auth": {
+    "signin": "Sign In",
+    "signout": "Sign Out"
+  }
+}

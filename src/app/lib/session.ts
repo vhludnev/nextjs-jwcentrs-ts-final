@@ -25,12 +25,12 @@ export const authOptions = {
       },
       async authorize(credentials) {
         if (!credentials) {
-          throw new Error('No credentials.')
+          throw new Error('no-credentials')
         }
         const { email, password } = credentials
 
         if (BLACKLIST_EMAILS.includes(email.toLowerCase())) {
-          throw new Error('Вы уже зарегистрированны через другой адрес эл.почты!')
+          throw new Error('email-already-registered')
         }
 
         await connectDb()
@@ -41,16 +41,16 @@ export const authOptions = {
         })
 
         if (user?.provider === 'google') {
-          throw new Error('Воспользуйтесь авторизацией через Google!')
+          throw new Error('login-with-google')
         }
 
         if (!user) {
-          throw new Error('Неверные данные!')
+          throw new Error('wrong-data')
         } else {
           const isValid = await verifyPassword(password, user.password)
 
           if (!isValid) {
-            throw new Error('Неверные данные!')
+            throw new Error('wrong-data')
           }
 
           return { email: user.email, id: user.id }
@@ -82,7 +82,7 @@ export const authOptions = {
         }
 
         if (BLACKLIST_EMAILS.includes(email.toLowerCase())) {
-          throw new Error('Вы уже зарегистрированны через другой Google профиль!')
+          throw new Error('google-already-registered')
         }
 
         await connectDb()
@@ -106,8 +106,7 @@ export const authOptions = {
             error instanceof Error && console.log('Ошибка: ', error.message)
           }
         } else {
-          if (userExists.provider === 'credentials')
-            throw new Error('Авторизуйтесь с помощью адреса эл. почты и пароля')
+          if (userExists.provider === 'credentials') throw new Error('login-with-email')
           return userExists
         }
       }
@@ -137,6 +136,16 @@ export const authOptions = {
 
       return session
     },
+
+    // async redirect({ url, baseUrl }) {
+    //   console.log(url, baseUrl)
+
+    //   // Allows relative callback URLs
+    //   if (url.startsWith('/')) return `${baseUrl}${url}`
+    //   // Allows callback URLs on the same origin
+    //   else if (new URL(url).origin === baseUrl) return url
+    //   return baseUrl
+    // },
 
     async jwt({ token, user, trigger, session }) {
       if (trigger === 'update') {

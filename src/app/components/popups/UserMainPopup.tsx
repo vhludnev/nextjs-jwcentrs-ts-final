@@ -1,68 +1,60 @@
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 //import PopupWrapper from "./PopupWrapper";
-import { BsTrash, RxUpdate, FcGoogle, AiOutlineGoogle } from "@/lib/icons";
-import { cc, permissionClient, rounded } from "@/utils";
-import ConfirmPopup from "./ConfirmPopup";
-import Modal from "./Modal";
-import type { TUser } from "@/types/user";
-import type { RoundedSize } from "@/types/modal";
+import { BsTrash, RxUpdate, FcGoogle, AiOutlineGoogle } from '@/lib/icons'
+import { cc, permissionClient, rounded } from '@/utils'
+import ConfirmPopup from './ConfirmPopup'
+import Modal from './Modal'
+import type { TUser } from '@/types/user'
+import type { RoundedSize } from '@/types/modal'
+import { useTranslations } from 'next-intl'
 
-const statusMsg = (status: TUser["status"]) => {
-  switch (status) {
-    case "admin":
-      return "присвоить ПОЛНЫЙ доступ";
-    default:
-      return "убрать ПОЛНЫЙ доступ";
-  }
-};
+// const statusMsg = (status: TUser['status'], t: (key: string) => string) => {
+//   switch (status) {
+//     case 'admin':
+//       return 'присвоить ПОЛНЫЙ доступ'
+//     default:
+//       return 'убрать ПОЛНЫЙ доступ'
+//   }
+// }
 
 type Props = {
-  popupData: TUser;
-  open: boolean;
-  closeModal: () => void;
-  updateUserInfo: (id: TUser["id"], newInfoObj: Partial<TUser>) => void;
-  removeUser: (id: TUser["id"]) => void;
-  roundedSize?: RoundedSize;
-};
+  popupData: TUser
+  open: boolean
+  closeModal: () => void
+  updateUserInfo: (id: TUser['id'], newInfoObj: Partial<TUser>) => void
+  removeUser: (id: TUser['id']) => void
+  roundedSize?: RoundedSize
+  //t: (messageKey: string) => string
+}
 
-const UserMainPopup = ({
-  popupData,
-  open,
-  closeModal,
-  updateUserInfo,
-  removeUser,
-  roundedSize = "lg",
-}: Props) => {
-  const [publisherName, setPublisherName] = useState(popupData?.name);
-  const [publisherEmail, setPublisherEmail] = useState(popupData?.email);
+const UserMainPopup = ({ popupData, open, closeModal, updateUserInfo, removeUser, roundedSize = 'lg' }: Props) => {
+  const [publisherName, setPublisherName] = useState(popupData?.name)
+  const [publisherEmail, setPublisherEmail] = useState(popupData?.email)
 
-  const { data: session } = useSession();
+  const { data: session } = useSession()
+  const t = useTranslations('UsersPage')
 
-  const newProvider =
-    popupData?.provider === "google" ? "credentials" : "google";
+  const newProvider = popupData?.provider === 'google' ? 'credentials' : 'google'
 
   return (
     <Modal
       isOpen={open}
       closeOnDocumentClick={false}
       onClose={closeModal}
-      className="w-[350px] drop-shadow fullheight"
+      className='w-[350px] drop-shadow fullheight'
       roundedSize={roundedSize}
     >
       {/* <div className="modal w-[350px] fullheight"> */}
-      {permissionClient("admin", session?.user) && (
+      {permissionClient('admin', session?.user) && (
         <ConfirmPopup
           handleConfirm={() => removeUser(popupData.id)}
-          text="Вы уверены, что хотели бы удалить эту учётную запись?"
-          btnClass="danger hover:bg-red-700"
+          text={t('confirm.you-sure-wanting', { status: 'removeaccount' })}
+          btnClass='danger hover:bg-red-700'
           nested={true}
           button={
-            <button className="absolute left-5 top-[1.1rem] outline-none">
-              <BsTrash
-                size={20}
-                className="text-gray-400 hover:text-red-700 transition ease-in-out duration-250"
-              />
+            <button className='absolute left-5 top-[1.1rem] outline-none'>
+              <BsTrash size={20} className='text-gray-400 hover:text-red-700 transition ease-in-out duration-250' />
             </button>
           }
         />
@@ -72,36 +64,27 @@ const UserMainPopup = ({
         </button> */}
       {popupData && (
         <>
-          <div
-            className={cc(
-              "header",
-              rounded("t", roundedSize),
-              "text-center dark:text-white"
-            )}
-          >
-            Обновить данные
+          <div className={cc('header', rounded('t', roundedSize), 'text-center dark:text-white')}>
+            {t('update-info')}
           </div>
-          <div className="content">
-            <div className="relative">
-              <table className="w-full text-sm text-left text-gray-600">
-                <tbody className="bg-white dark:filter dark:brightness-90 divide-y dark:divide-gray-400">
+          <div className='content'>
+            <div className='relative'>
+              <table className='w-full text-sm text-left text-gray-600'>
+                <tbody className='bg-white dark:filter dark:brightness-90 divide-y dark:divide-gray-400'>
                   <tr>
-                    <th
-                      scope="row"
-                      className="p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]"
-                    >
-                      Имя
+                    <th scope='row' className='p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]'>
+                      {t('name')}
                     </th>
-                    <td className="p-4 relative">
+                    <td className='p-4 relative'>
                       <input
-                        type="text"
-                        name="name"
-                        placeholder="Имя, Фамилия"
+                        type='text'
+                        name='name'
+                        placeholder='Имя, Фамилия'
                         value={publisherName}
                         required
                         minLength={3}
-                        className="pr-5 mb-0 max-w-[190px] text-sm font-normal placeholder:text-sm dark:focus:text-black dark:w-[95%]"
-                        onChange={(e) => setPublisherName(e.target.value)}
+                        className='pr-5 mb-0 max-w-[190px] text-sm font-normal placeholder:text-sm dark:focus:text-black dark:w-[95%]'
+                        onChange={e => setPublisherName(e.target.value)}
                       />
                       {publisherName !== popupData?.name && (
                         <ConfirmPopup
@@ -111,13 +94,13 @@ const UserMainPopup = ({
                               name: publisherName,
                             })
                           }
-                          text={`Вы уверены, что хотели бы сменить имя возвещателю на ${publisherName}?`}
+                          text={`${t('confirm.you-sure-wanting', { status: 'rename' })} ${publisherName}?`}
                           nested={true}
                           button={
-                            <span className="absolute top-1/2 -translate-y-1/2 right-2 bg-white border-2 border-gray-100 rounded-full p-1">
+                            <span className='absolute top-1/2 -translate-y-1/2 right-2 bg-white border-2 border-gray-100 rounded-full p-1'>
                               <RxUpdate
-                                cursor="pointer"
-                                className="text-green-600 hover:text-green-400 transition ease-in-out duration-500"
+                                cursor='pointer'
+                                className='text-green-600 hover:text-green-400 transition ease-in-out duration-500'
                                 size={14}
                               />
                             </span>
@@ -128,22 +111,19 @@ const UserMainPopup = ({
                   </tr>
 
                   <tr>
-                    <th
-                      scope="row"
-                      className="p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]"
-                    >
-                      Эл.почта
+                    <th scope='row' className='p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]'>
+                      {t('email')}
                     </th>
-                    <td className="p-4 relative">
+                    <td className='p-4 relative'>
                       <input
-                        type="text"
-                        name="email"
-                        placeholder="Эл. почта"
+                        type='text'
+                        name='email'
+                        placeholder={t('email')}
                         value={publisherEmail}
                         required
                         minLength={3}
-                        className="pr-5 mb-0 max-w-[190px] text-sm font-normal placeholder:text-sm dark:focus:text-black dark:w-[95%]"
-                        onChange={(e) => setPublisherEmail(e.target.value)}
+                        className='pr-5 mb-0 max-w-[190px] text-sm font-normal placeholder:text-sm dark:focus:text-black dark:w-[95%]'
+                        onChange={e => setPublisherEmail(e.target.value)}
                       />
                       {publisherEmail !== popupData?.email && (
                         <ConfirmPopup
@@ -153,20 +133,22 @@ const UserMainPopup = ({
                               email: publisherEmail,
                             })
                           }
-                          text={`Вы уверены, что хотели бы сменить адрес эл. почты возвещателю ${publisherName} на ${publisherEmail}?`}
+                          text={`${t('confirm.you-sure-wanting', { status: 'emailchange' })} ${publisherName} ${t(
+                            'confirm.to'
+                          )} ${publisherEmail}?`}
                           nested={true}
                           button={
-                            <span className="absolute top-1/2 -translate-y-1/2 right-2 bg-white border-2 border-gray-100 rounded-full p-1">
+                            <span className='absolute top-1/2 -translate-y-1/2 right-2 bg-white border-2 border-gray-100 rounded-full p-1'>
                               <RxUpdate
-                                cursor="pointer"
-                                className="text-green-600 hover:text-green-400 transition ease-in-out duration-500"
+                                cursor='pointer'
+                                className='text-green-600 hover:text-green-400 transition ease-in-out duration-500'
                                 size={14}
                               />
                             </span>
                           }
                         />
                       )}
-                      {popupData?.email.split("@")[1] === "gmail.com" && (
+                      {popupData?.email.split('@')[1] === 'gmail.com' && (
                         <ConfirmPopup
                           handleConfirm={() =>
                             updateUserInfo(
@@ -175,27 +157,17 @@ const UserMainPopup = ({
                               //newProvider
                             )
                           }
-                          text={`Вы уверены, что хотели бы ${
-                            popupData.provider === "google"
-                              ? "отключить"
-                              : "активировать"
-                          } Гугл кнопку для ${publisherEmail}?`}
-                          warning={
-                            popupData.provider === "google"
-                              ? "Вход в систему станет возможным только через форму авторизации!"
-                              : "Вход в систему через Пароль станет невозможным!"
-                          }
+                          text={`${t('confirm.you-sure-wanting', { status: 'google' })} ${
+                            popupData.provider === 'google' ? t('switch-off') : t('switch-on')
+                          } ${t('confirm.google-btn-for')} ${publisherEmail}?`}
+                          warning={t('google-access-change', { login: popupData.provider })}
                           nested={true}
                           button={
-                            <span className="absolute top-1/2 -translate-y-1/2 -right-2.5 bg-white dark:border border-gray-100 rounded-full p-0.5">
-                              {popupData?.provider === "google" ? (
-                                <FcGoogle cursor="pointer" size={15} />
+                            <span className='absolute top-1/2 -translate-y-1/2 -right-2.5 bg-white dark:border border-gray-100 rounded-full p-0.5'>
+                              {popupData?.provider === 'google' ? (
+                                <FcGoogle cursor='pointer' size={15} />
                               ) : (
-                                <AiOutlineGoogle
-                                  cursor="pointer"
-                                  size={15}
-                                  color="lightgray"
-                                />
+                                <AiOutlineGoogle cursor='pointer' size={15} color='lightgray' />
                               )}
                             </span>
                           }
@@ -206,19 +178,14 @@ const UserMainPopup = ({
 
                   {popupData?.verified && (
                     <tr>
-                      <th
-                        scope="row"
-                        className="p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]"
-                      >
-                        Доступ
+                      <th scope='row' className='p-4 font-medium text-gray-900 whitespace-nowrap max-w-[106px]'>
+                        {t('access')}
                       </th>
-                      <td className="p-4 text-base">
-                        {popupData.status === "admin" ? (
-                          <span className="font-semibold text-[green]">
-                            Полный
-                          </span>
+                      <td className='p-4 text-base'>
+                        {popupData.status === 'admin' ? (
+                          <span className='font-semibold text-[green]'>{t('full')}</span>
                         ) : (
-                          <span className="font-medium text-[grey]">——</span>
+                          <span className='font-medium text-[grey]'>——</span>
                         )}
                       </td>
                     </tr>
@@ -229,41 +196,35 @@ const UserMainPopup = ({
           </div>
         </>
       )}
-      <div
-        className={cc("actions", rounded("b", roundedSize), "flex-col gap-2")}
-      >
+      <div className={cc('actions', rounded('b', roundedSize), 'flex-col gap-2')}>
         {popupData?.verified ? (
           <>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <ConfirmPopup
-                handleConfirm={() =>
-                  updateUserInfo(popupData.id, { status: "admin" })
-                }
-                text={`Вы уверены, что хотели бы ${statusMsg("admin")}?`}
+                handleConfirm={() => updateUserInfo(popupData.id, { status: 'admin' })}
+                text={`${t('confirm.you-sure-wanting', { status: 'admin' })}?`}
                 nested={true}
                 button={
                   <button
-                    className="button success hover:bg-green-600 transition ease-in-out duration-250 min-w-[95px]"
-                    disabled={popupData.status === "admin"}
+                    className='button success hover:bg-green-600 transition ease-in-out duration-250 min-w-[95px]'
+                    disabled={popupData.status === 'admin'}
                   >
-                    Полный
+                    {t('full')}
                   </button>
                 }
               />
 
               <ConfirmPopup
-                handleConfirm={() =>
-                  updateUserInfo(popupData.id, { status: "user" })
-                }
-                text={`Вы уверены, что хотели бы ${statusMsg("user")}?`}
-                btnClass="danger hover:bg-red-700"
+                handleConfirm={() => updateUserInfo(popupData.id, { status: 'user' })}
+                text={`${t('confirm.you-sure-wanting', { status: 'user' })}?`}
+                btnClass='danger hover:bg-red-700'
                 nested={true}
                 button={
                   <button
-                    disabled={popupData.status === "user"}
-                    className="button danger hover:bg-red-600  transition ease-in-out duration-350 min-w-[95px]"
+                    disabled={popupData.status === 'user'}
+                    className='button danger hover:bg-red-600  transition ease-in-out duration-350 min-w-[95px]'
                   >
-                    Убрать
+                    {t('remove')}
                   </button>
                 }
               />
@@ -271,14 +232,12 @@ const UserMainPopup = ({
           </>
         ) : (
           <ConfirmPopup
-            handleConfirm={() =>
-              updateUserInfo(popupData.id, { verified: true })
-            }
-            text="Вы уверены, что хотели бы этому возвещателю дать доступ к сайту?"
+            handleConfirm={() => updateUserInfo(popupData.id, { verified: true })}
+            text={`${t('confirm.you-sure-wanting', { status: 'grantaccess' })}?`}
             nested={true}
             button={
-              <button className="button success hover:bg-green-600 transition ease-in-out duration-250 min-w-[95px]">
-                Подтветдить
+              <button className='button success hover:bg-green-600 transition ease-in-out duration-250 min-w-[95px]'>
+                {t('confirm.message')}
               </button>
             }
           />
@@ -286,7 +245,7 @@ const UserMainPopup = ({
       </div>
       {/* </div> */}
     </Modal>
-  );
-};
+  )
+}
 
-export default UserMainPopup;
+export default UserMainPopup

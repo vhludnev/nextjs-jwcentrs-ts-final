@@ -1,5 +1,6 @@
 import type { RoundedSize } from '@/types/modal'
 import { cc, rounded } from '@/utils'
+import { Locale } from 'date-fns'
 import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -11,6 +12,7 @@ type ModalCommonProps = {
   className?: string
   classNameLeftIcon?: string
   roundedSize?: RoundedSize
+  dateFnsLocale?: Locale
   children: ReactNode
 }
 

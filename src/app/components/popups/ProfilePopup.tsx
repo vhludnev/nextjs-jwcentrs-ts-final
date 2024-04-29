@@ -9,10 +9,11 @@ import type { RoundedSize } from '@/types/modal'
 import { cc, rounded } from '@/utils'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 //moment.locale("ru");
 
-const ThemeSelect = () => {
+const ThemeSelect = ({ t }: { t: (key: string) => string }) => {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
 
@@ -28,16 +29,16 @@ const ThemeSelect = () => {
         onChange={e => setTheme(e.target.value)}
       >
         <option disabled className='dark:bg-gray-500 dark:disabled:text-white/70' value=''>
-          Тема
+          {t('theme')}
         </option>
         <option className='dark:bg-gray-500' value='system'>
-          Системная
+          {t('system')}
         </option>
         <option className='dark:bg-gray-500' value='light'>
-          Светлая
+          {t('light')}
         </option>
         <option className='dark:bg-gray-500' value='dark'>
-          Тёмная
+          {t('dark')}
         </option>
       </select>
     </div>
@@ -45,6 +46,7 @@ const ThemeSelect = () => {
 }
 
 const ProfilePopup = ({ data, roundedSize }: { data: TUser; roundedSize?: RoundedSize }) => {
+  const t = useTranslations('Nav')
   return (
     <Modal
       closeOnDocumentClick={false}
@@ -68,7 +70,7 @@ const ProfilePopup = ({ data, roundedSize }: { data: TUser; roundedSize?: Rounde
               &times;
             </button> */}
             <div className={cc('header', rounded('t', roundedSize), 'bg-primary-white h-14 dark:bg-[#454b4d]')}>
-              <ThemeSelect />
+              <ThemeSelect t={t} />
             </div>
             <div
               className={cc(

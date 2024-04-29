@@ -1,0 +1,30 @@
+{
+  "nav": {
+    "hello": "Здравствуй",
+    "enter": "Войти",
+    "stands": "Стенды",
+    "schedules": "Расписания",
+    "report": "Отчёт",
+    "territoryinfo": "Мои Участки",
+    "announcements": "Объявления",
+    "territories": "Участки",
+    "all-reports": "Отчёты",
+    "talks": "Доклады",
+    "users": "Список",
+    "help": "Помощь"
+  },
+  "page": {
+    "home": {
+      "title": "Willkommen bei NextJs i18n",
+      "description": "Internationalisierung im NextJs 13 App-Router"
+    },
+    "dashboard": {
+      "title": "Dashboard-Seite",
+      "description": "Dies ist die Benutzer-Dashboard-Seite."
+    }
+  },
+  "auth": {
+    "signin": "Anmeldung",
+    "signout": "Ausloggen"
+  }
+}
